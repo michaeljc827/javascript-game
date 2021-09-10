@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+
+        <style>
+            #canvas {
+                border: solid black 1px;
+                margin: 0 auto;
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div style="text-align: center ;">
+            <canvas id="canvas" width="800" height="800"></canvas>
+        </div>
+
+        <!--Load in Classes to mimic Object Oriented Programming. -->
+        <script src="./scripts/graphics-engine.js"></script>
+
+        <script src="./scripts/game.js"></script>
+        <script>
+            // some stuff to make canvas magic work
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // some global variables cause we're lazy
+            const SCREEN_WIDTH = 800;
+            const SCREEN_HEIGHT = 800;
+            const OBJECT_CIRCLE_SIZE = 50;
+
+            Game.start();
+        </script>
+    </body>
+</html>
