@@ -3,13 +3,42 @@ const Game = {
         x: 400,
         y: 400
     },
+    //because event listens can only process one key a time, keep track of whats being pressed down to move multiple directions
+    keyLoggerArray: [
+
+    ],
     start: () => { 
         // initialize our objects
         this.graphicsEngine = new GraphicsEngine(Game);
 
         // draw the game every 16 miliseconds resulting in about 60 frames per second
-        setInterval(Game.draw, 16);
+        //right now the physics will be tied into the drawing. would need a seperate interval for physics if want to seperate them
+        setInterval(Game.runFrame, 16);
+
         Game.startListeners();
+    },
+    runFrame: () => {
+        Game.physics()
+        Game.draw()
+    },
+    physics: () => {
+        const UP_KEYS = [87,38];
+        const DOWN_KEYS = [40,83];
+        const RIGHT_KEYS = [68,38];
+        const LEFT_KEYS = [65,37];
+        //calculate player movement based on keys pressed
+        if (Game.keyLoggerArray.some(a => UP_KEYS.includes(a))){
+            Game.movePlayer("up");
+        }
+        if (Game.keyLoggerArray.some(a => RIGHT_KEYS.includes(a))){
+            Game.movePlayer("right");
+        }
+        if (Game.keyLoggerArray.some(a => DOWN_KEYS.includes(a))){
+            Game.movePlayer("down");
+        }
+        if (Game.keyLoggerArray.some(a => LEFT_KEYS.includes(a))){
+            Game.movePlayer("left");
+        }
     },
     draw: () => {
         this.graphicsEngine.renderFrame();
@@ -17,29 +46,16 @@ const Game = {
     startListeners: () => {
         //listen for keyboard presses to move player
         window.addEventListener("keydown",(e) => {
-            console.log(`you pressed ${e.keyCode}`)
-            switch (e.keyCode){
-                //up
-                case 87:
-                case 38:
-                    Game.movePlayer("up");
-                    break;
-                //right
-                case 68:
-                case 39:
-                    Game.movePlayer("right");
-                    break;
-                //down
-                case 40:
-                case 83:
-                    Game.movePlayer("down");
-                    break;
-                //left
-                case 65:
-                case 37:
-                    Game.movePlayer("left");
-                    break;
+            if (!Game.keyLoggerArray.includes(e.keyCode)){
+                !Game.keyLoggerArray.push(e.keyCode);
             }
+        }, false);
+
+        window.addEventListener("keyup",(e) => {
+           const index = Game.keyLoggerArray.findIndex(a => a === e.keyCode);
+           if (index > -1){
+               Game.keyLoggerArray.splice(index,1)
+           }
         }, false);
     },
     movePlayer: (direction) => {
